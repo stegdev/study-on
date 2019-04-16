@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d298459c18533c7030015355027c5138",
+    "content-hash": "d580aa1377053c18bfa283b5636f7f91",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2952,16 +2952,16 @@
         },
         {
             "name": "symfony/form",
-            "version": "v4.2.4",
+            "version": "v4.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/form.git",
-                "reference": "d44ad1ac671fb79fe5b3093b61779476da8b63f9"
+                "reference": "690c8ff04c536bfd54570b774f81c3b7c59cdc85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/form/zipball/d44ad1ac671fb79fe5b3093b61779476da8b63f9",
-                "reference": "d44ad1ac671fb79fe5b3093b61779476da8b63f9",
+                "url": "https://api.github.com/repos/symfony/form/zipball/690c8ff04c536bfd54570b774f81c3b7c59cdc85",
+                "reference": "690c8ff04c536bfd54570b774f81c3b7c59cdc85",
                 "shasum": ""
             },
             "require": {
@@ -3030,7 +3030,7 @@
             ],
             "description": "Symfony Form Component",
             "homepage": "https://symfony.com",
-            "time": "2019-02-23T15:42:05+00:00"
+            "time": "2019-04-10T16:20:36+00:00"
         },
         {
             "name": "symfony/framework-bundle",
@@ -4940,16 +4940,16 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v4.2.4",
+            "version": "v4.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "ba50866242d992f0dd818e2c34c5088f163c974d"
+                "reference": "2313fb5003110ab2e338bea27d9ced5bde7559c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/ba50866242d992f0dd818e2c34c5088f163c974d",
-                "reference": "ba50866242d992f0dd818e2c34c5088f163c974d",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/2313fb5003110ab2e338bea27d9ced5bde7559c5",
+                "reference": "2313fb5003110ab2e338bea27d9ced5bde7559c5",
                 "shasum": ""
             },
             "require": {
@@ -5025,7 +5025,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2019-03-03T18:11:24+00:00"
+            "time": "2019-04-11T11:27:41+00:00"
         },
         {
             "name": "symfony/var-exporter",

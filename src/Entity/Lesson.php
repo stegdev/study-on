@@ -1,10 +1,7 @@
 <?php
-
 namespace App\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LessonRepository")
  */
@@ -16,82 +13,64 @@ class Lesson
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Course", inversedBy="Lessons")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $course;
-
+    private $CourseID;
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
      */
-    private $name;
-
+    private $Name;
     /**
      * @ORM\Column(type="text")
-     * @Assert\NotBlank
      */
-    private $content;
-
+    private $Content;
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Assert\NotBlank
-     * @Assert\LessThan(value=1000)
+     * @Assert\Range(min = 1, max = 10000,
+     * minMessage = "Номер не может быть отрицательным",
+     * maxMessage = "Номер не может быть больше 10000")
      */
-    private $SerialNumber;
-
+    private $Nubmer;
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getCourse(): ?Course
+    public function getCourseID(): ?Course
     {
-        return $this->course;
+        return $this->CourseID;
     }
-
-    public function setCourse(?Course $course): self
+    public function setCourseID(?Course $CourseID): self
     {
-        $this->course = $course;
-
+        $this->CourseID = $CourseID;
         return $this;
     }
-
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->Name;
     }
-
-    public function setName(string $name): self
+    public function setName(string $Name): self
     {
-        $this->name = $name;
-
+        $this->Name = $Name;
         return $this;
     }
-
     public function getContent(): ?string
     {
-        return $this->content;
+        return $this->Content;
     }
-
-    public function setContent(string $content): self
+    public function setContent(string $Content): self
     {
-        $this->content = $content;
-
+        $this->Content = $Content;
         return $this;
     }
-
-    public function getSerialNumber(): ?int
+    public function getNubmer(): ?int
     {
-        return $this->SerialNumber;
+        return $this->Nubmer;
     }
-
-    public function setSerialNumber(?int $SerialNumber): self
+    public function setNubmer(?int $Nubmer): self
     {
-        $this->SerialNumber = $SerialNumber;
-
+        $this->Nubmer = $Nubmer;
         return $this;
     }
 }

@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Entity;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CourseRepository")
@@ -18,86 +15,69 @@ class Course
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
      */
-    private $name;
-
+    private $Name;
     /**
      * @ORM\Column(type="string", length=1000, nullable=true)
-     * @Assert\NotBlank
      */
-    private $description;
-
+    private $Description;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Lesson", mappedBy="CourseID", orphanRemoval=true)
+     * @ORM\OrderBy({"Nubmer"="ASC"})
      */
     private $Lessons;
-
     public function __construct()
     {
-        $this->lessons = new ArrayCollection();
+        $this->Lessons = new ArrayCollection();
     }
-
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getname(): ?string
+    public function getName(): ?string
     {
-        return $this->name;
+        return $this->Name;
     }
-
-    public function setname(string $name): self
+    public function setName(string $Name): self
     {
-        $this->name = $name;
-
+        $this->Name = $Name;
         return $this;
     }
-
     public function getDescription(): ?string
     {
-        return $this->description;
+        return $this->Description;
     }
-
-    public function setDescription(?string $description): self
+    public function setDescription(?string $Description): self
     {
-        $this->description = $description;
-
+        $this->Description = $Description;
         return $this;
     }
-
     /**
      * @return Collection|Lesson[]
      */
     public function getLessons(): Collection
     {
-        return $this->lessons;
+        return $this->Lessons;
     }
-
     public function addLesson(Lesson $lesson): self
     {
-        if (!$this->lessons->contains($lesson)) {
-            $this->lessons[] = $lesson;
-            $lesson->setCourse($this);
+        if (!$this->Lessons->contains($lesson)) {
+            $this->Lessons[] = $lesson;
+            $lesson->setCourseID($this);
         }
-
         return $this;
     }
-
     public function removeLesson(Lesson $lesson): self
     {
-        if ($this->lessons->contains($lesson)) {
-            $this->lessons->removeElement($lesson);
+        if ($this->Lessons->contains($lesson)) {
+            $this->Lessons->removeElement($lesson);
             // set the owning side to null (unless already changed)
-            if ($lesson->getCourse() === $this) {
-                $lesson->setCourse(null);
+            if ($lesson->getCourseID() === $this) {
+                $lesson->setCourseID(null);
             }
         }
-
         return $this;
     }
 }
