@@ -1,11 +1,3 @@
-# index:
-#   path: /
-#   controller: App\Controller\CourseController::index
-
-# redirecting the homepage
-homepage:
-  path: /
-  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
-  defaults:
-    path: /courses
-    permanent: true
+index:
+    path: /
+    controller: App\Controller\CourseController::index

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Controller;
+
 use App\Entity\Course;
 use App\Form\CourseType;
 use App\Repository\CourseRepository;
@@ -7,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 /**
  * @Route("/courses")
  */
@@ -21,6 +24,7 @@ class CourseController extends AbstractController
             'courses' => $courseRepository->findAll(),
         ]);
     }
+
     /**
      * @Route("/new", name="course_new", methods={"GET","POST"})
      */
@@ -29,17 +33,21 @@ class CourseController extends AbstractController
         $course = new Course();
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($course);
             $entityManager->flush();
+
             return $this->redirectToRoute('course_index');
         }
+
         return $this->render('course/new.html.twig', [
             'course' => $course,
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/{id}", name="course_show", methods={"GET"})
      */
@@ -49,6 +57,7 @@ class CourseController extends AbstractController
             'course' => $course,
         ]);
     }
+
     /**
      * @Route("/{id}/edit", name="course_edit", methods={"GET","POST"})
      */
@@ -56,17 +65,21 @@ class CourseController extends AbstractController
     {
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
+
             return $this->redirectToRoute('course_index', [
                 'id' => $course->getId(),
             ]);
         }
+
         return $this->render('course/edit.html.twig', [
             'course' => $course,
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/{id}", name="course_delete", methods={"DELETE"})
      */
@@ -77,6 +90,7 @@ class CourseController extends AbstractController
             $entityManager->remove($course);
             $entityManager->flush();
         }
+
         return $this->redirectToRoute('course_index');
     }
 }

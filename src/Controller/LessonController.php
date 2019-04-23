@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Controller;
+
 use App\Entity\Course;
 use App\Entity\Lesson;
 use App\Form\LessonType;
@@ -8,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 /**
  * @Route("/lessons")
  */
@@ -22,6 +25,7 @@ class LessonController extends AbstractController
             'lessons' => $lessonRepository->findAll(),
         ]);
     }
+
     /**
      * @Route("/new?course_id={id}", name="lesson_new", methods={"GET","POST"})
      */
@@ -31,23 +35,28 @@ class LessonController extends AbstractController
         $myCourse = $this->getDoctrine()->getManager()->getRepository(Course::class)->find($id);
         if($myCourse) {
             $lesson->setCourseID($myCourse);
+
             $form = $this->createForm(LessonType::class, $lesson);
             $form->handleRequest($request);
+
             if ($form->isSubmitted() && $form->isValid()) {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($lesson);
                 $entityManager->flush();
+
                 return $this->redirectToRoute('course_show', ['id' => $lesson->getCourseID()->getId()]);
             }
         }
         else {
             $this->render('404.html.twig');
         }
+
         return $this->render('lesson/new.html.twig', [
             'lesson' => $lesson,
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/{id}", name="lesson_show", methods={"GET"})
      */
@@ -57,6 +66,7 @@ class LessonController extends AbstractController
             'lesson' => $lesson,
         ]);
     }
+
     /**
      * @Route("/{id}/edit", name="lesson_edit", methods={"GET","POST"})
      */
@@ -64,17 +74,19 @@ class LessonController extends AbstractController
     {
         $form = $this->createForm(LessonType::class, $lesson);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('lesson_index', [
-                'id' => $lesson->getId(),
-            ]);
+
+            return $this->redirectToRoute('lesson_show', ['id' => $lesson->getId()]);
         }
+
         return $this->render('lesson/edit.html.twig', [
             'lesson' => $lesson,
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * @Route("/{id}", name="lesson_delete", methods={"DELETE"})
      */
@@ -85,6 +97,7 @@ class LessonController extends AbstractController
             $entityManager->remove($lesson);
             $entityManager->flush();
         }
+
         return $this->redirectToRoute('course_show', ['id'=>$lesson->getCourseID()->getId()]);
     }
 }

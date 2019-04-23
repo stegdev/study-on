@@ -23,3 +23,13 @@ fixtload:
 
 require:
 	@${COMPOSER} require $2
+
+encore_dev:
+	@${COMPOSE} run node yarn encore dev
+
+encore_prod:
+	@${COMPOSE} run node yarn encore production
+
+encore_restart_watch:
+	@${COMPOSE} run node yarn encore dev --watch
+

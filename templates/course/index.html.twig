@@ -1,37 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Course index{% endblock %}
+{% block title %}Курсы / StudyOn{% endblock %}
 
 {% block body %}
-    <h1>Course index</h1>
+    <h1>Курсы</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
         {% for course in courses %}
-            <tr>
-                <td>{{ course.id }}</td>
-                <td>{{ course.Name }}</td>
-                <td>{{ course.Description }}</td>
-                <td>
-                    <a href="{{ path('course_show', {'id': course.id}) }}">show</a>
-                    <a href="{{ path('course_edit', {'id': course.id}) }}">edit</a>
-                </td>
-            </tr>
+                <h2>
+                    <a href="{{ path('course_show', {'id': course.id}) }}">{{ course.Name }}</a>
+                </h2>
+                <h3>{{ course.Description }}</h3>
         {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
+            <h2>no records found</h2>
         {% endfor %}
-        </tbody>
-    </table>
 
-    <a href="{{ path('course_new') }}">Create new</a>
+    <a href="{{ path('course_new') }}">Добавить курс</a>
 {% endblock %}
