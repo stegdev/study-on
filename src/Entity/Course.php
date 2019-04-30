@@ -21,22 +21,22 @@ class Course
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Name;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
-    private $Description;
+    private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Lesson", mappedBy="CourseID", orphanRemoval=true)
-     * @ORM\OrderBy({"Nubmer"="ASC"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Lesson", mappedBy="course", orphanRemoval=true)
+     * @ORM\OrderBy({"number"="ASC"})
      */
-    private $Lessons;
+    private $lessons;
 
     public function __construct()
     {
-        $this->Lessons = new ArrayCollection();
+        $this->lessons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,24 +46,24 @@ class Course
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
 
     public function getDescription(): ?string
     {
-        return $this->Description;
+        return $this->description;
     }
 
-    public function setDescription(?string $Description): self
+    public function setDescription(?string $description): self
     {
-        $this->Description = $Description;
+        $this->description = $description;
 
         return $this;
     }
@@ -73,14 +73,14 @@ class Course
      */
     public function getLessons(): Collection
     {
-        return $this->Lessons;
+        return $this->lessons;
     }
 
     public function addLesson(Lesson $lesson): self
     {
-        if (!$this->Lessons->contains($lesson)) {
-            $this->Lessons[] = $lesson;
-            $lesson->setCourseID($this);
+        if (!$this->lessons->contains($lesson)) {
+            $this->lessons[] = $lesson;
+            $lesson->setCourse($this);
         }
 
         return $this;
@@ -88,11 +88,11 @@ class Course
 
     public function removeLesson(Lesson $lesson): self
     {
-        if ($this->Lessons->contains($lesson)) {
-            $this->Lessons->removeElement($lesson);
+        if ($this->lessons->contains($lesson)) {
+            $this->lessons->removeElement($lesson);
             // set the owning side to null (unless already changed)
-            if ($lesson->getCourseID() === $this) {
-                $lesson->setCourseID(null);
+            if ($lesson->getCourse() === $this) {
+                $lesson->setCourse(null);
             }
         }
 

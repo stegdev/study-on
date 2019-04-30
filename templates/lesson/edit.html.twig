@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Редактирование {{ lesson.Name }} / StudyOn{% endblock %}
+{% block title %}Редактирование {{ lesson.name }} / StudyOn{% endblock %}
 
 {% block body %}
-    <h1>Редактирование {{ lesson.Name }}</h1>
+    <h1>Редактирование {{ lesson.name }}</h1>
 
     {{ include('lesson/_form.html.twig', {'button_label': 'Update'}) }}
 

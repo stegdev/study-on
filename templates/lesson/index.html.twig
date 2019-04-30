@@ -8,10 +8,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Content</th>
-                <th>Nubmer</th>
+                <th>id</th>
+                <th>name</th>
+                <th>content</th>
+                <th>nubmer</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -19,9 +19,9 @@
         {% for lesson in lessons %}
             <tr>
                 <td>{{ lesson.id }}</td>
-                <td>{{ lesson.Name }}</td>
-                <td>{{ lesson.Content }}</td>
-                <td>{{ lesson.Nubmer }}</td>
+                <td>{{ lesson.name }}</td>
+                <td>{{ lesson.content }}</td>
+                <td>{{ lesson.nubmer }}</td>
                 <td>
                     <a href="{{ path('lesson_show', {'id': lesson.id}) }}">show</a>
                     <a href="{{ path('lesson_edit', {'id': lesson.id}) }}">edit</a>

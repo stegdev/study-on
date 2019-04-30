@@ -18,20 +18,20 @@ class Lesson
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Course", inversedBy="Lessons")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Course", inversedBy="lessons")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $CourseID;
+    private $course;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Name;
+    private $name;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $Content;
+    private $content;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -39,57 +39,57 @@ class Lesson
      * minMessage = "Номер не может быть отрицательным",
      * maxMessage = "Номер не может быть больше 10000")
      */
-    private $Nubmer;
+    private $number;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCourseID(): ?Course
+    public function getCourse(): ?Course
     {
-        return $this->CourseID;
+        return $this->course;
     }
 
-    public function setCourseID(?Course $CourseID): self
+    public function setCourse(?Course $course): self
     {
-        $this->CourseID = $CourseID;
+        $this->course = $course;
 
         return $this;
     }
 
     public function getName(): ?string
     {
-        return $this->Name;
+        return $this->name;
     }
 
-    public function setName(string $Name): self
+    public function setName(string $name): self
     {
-        $this->Name = $Name;
+        $this->name = $name;
 
         return $this;
     }
 
     public function getContent(): ?string
     {
-        return $this->Content;
+        return $this->content;
     }
 
-    public function setContent(string $Content): self
+    public function setContent(string $content): self
     {
-        $this->Content = $Content;
+        $this->content = $content;
 
         return $this;
     }
 
-    public function getNubmer(): ?int
+    public function getNumber(): ?int
     {
-        return $this->Nubmer;
+        return $this->number;
     }
 
-    public function setNubmer(?int $Nubmer): self
+    public function setNumber(?int $number): self
     {
-        $this->Nubmer = $Nubmer;
+        $this->number = $number;
 
         return $this;
     }

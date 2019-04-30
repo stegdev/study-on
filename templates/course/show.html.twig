@@ -1,22 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ course.Name }} / StudyOn{% endblock %}
+{% block title %}{{ course.name }} / StudyOn{% endblock %}
 
 {% block body %}
-    <h1>{{ course.Name }}</h1>
-    <h2>{{ course.Description }}</h2>
+    <h1>{{ course.name }}</h1>
+    <h2>{{ course.description }}</h2>
     <h2>Уроки</h2>
+
     <ol>
         {% for lesson in course.getLessons %}
-            <li><a href ="{{ path('lesson_show', {'id': lesson.id}) }}">{{ lesson.Name }}</a></li>
+            <li><a href ="{{ path('lesson_show', {'id': lesson.id}) }}">{{ lesson.name }}</a></li>
         {% endfor %}
     </ol>
 
-    <a href="{{ path('course_index') }}">Вернуться к списку</a>
 
-    <a href="{{ path('course_edit', {'id': course.id}) }}">Редактировать</a>
-
-    <a href="{{ path('lesson_new', {'id': course.id}) }}">Добавить урок</a>
-
-    {{ include('course/_delete_form.html.twig') }}
+    <div class="row">
+        <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_index') }}">Вернуться к списку</a>
+        <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_edit', {'id': course.id}) }}">Редактировать</a>
+        <a class="btn btn-outline-dark m-sm-1" href="{{ path('lesson_new', {'course_id': course.id}) }}">Добавить урок</a>
+        {{ include('course/_delete_form.html.twig') }}
+    </div>
 {% endblock %}

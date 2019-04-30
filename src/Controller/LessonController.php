@@ -16,25 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LessonController extends AbstractController
 {
-    /**
-     * @Route("/", name="lesson_index", methods={"GET"})
-     */
-    public function index(LessonRepository $lessonRepository): Response
-    {
-        return $this->render('lesson/index.html.twig', [
-            'lessons' => $lessonRepository->findAll(),
-        ]);
-    }
 
     /**
-     * @Route("/new?course_id={id}", name="lesson_new", methods={"GET","POST"})
+     * @Route("/new", name="lesson_new", methods={"GET","POST"})
      */
-    public function new(Request $request, $id): Response
+    public function new(Request $request): Response
     {
         $lesson = new Lesson();
-        $myCourse = $this->getDoctrine()->getManager()->getRepository(Course::class)->find($id);
-        if($myCourse) {
-            $lesson->setCourseID($myCourse);
+        $courseId = $request->query->get('course_id');
+        $course = $this->getDoctrine()->getManager()->getRepository(Course::class)->find($courseId);
+        if($course) {
+            $lesson->setCourse($course);
 
             $form = $this->createForm(LessonType::class, $lesson);
             $form->handleRequest($request);
@@ -44,7 +36,7 @@ class LessonController extends AbstractController
                 $entityManager->persist($lesson);
                 $entityManager->flush();
 
-                return $this->redirectToRoute('course_show', ['id' => $lesson->getCourseID()->getId()]);
+                return $this->redirectToRoute('course_show', ['id' => $lesson->getCourse()->getId()]);
             }
         }
         else {
@@ -97,7 +89,6 @@ class LessonController extends AbstractController
             $entityManager->remove($lesson);
             $entityManager->flush();
         }
-
-        return $this->redirectToRoute('course_show', ['id'=>$lesson->getCourseID()->getId()]);
+        return $this->redirectToRoute('course_show', ['id'=>$lesson->getCourse()->getId()]);
     }
 }
