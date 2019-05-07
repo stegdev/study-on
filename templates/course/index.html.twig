@@ -4,18 +4,23 @@
 
 {% block body %}
     <h1>Курсы</h1>
-        <div class = "container-fluid">
+
             <div class="row">
                 {% for course in courses %}
-                    <div class="col-sm-5 border border-dark p-sm-2 m-sm-1">
-                        <h3>{{ course.name }}</h3>
-                        <p>{{ course.description }}</p>
-                        <a class="btn btn-outline-dark" href="{{ path('course_show', {'id':course.id}) }}">Пройти</a>
+                    <div class="col-md-6">
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h3 class="card-title">{{ course.name }}</h3>
+                                <p class="card-text">{{ course.description }}</p>
+                                <a class="card-link" href="{{ path('course_show', {'id':course.id}) }}">Пройти курс</a>
+                            </div>
+                        </div>
                     </div>
                 {% else %}
                     <h3>Курсов не обнаружено</h3>
                 {% endfor %}
             </div>
-        </div>
-    <a class="btn btn-outline-dark" href="{{ path('course_new') }}">Добавить курс</a>
+
+    <button class="btn btn-info" value="Кнопка" onClick='location.href="{{ path('course_new')}}"'>Новый курс</button>
 {% endblock %}
+
