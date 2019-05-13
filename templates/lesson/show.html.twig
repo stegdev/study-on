@@ -3,18 +3,21 @@
 {% block title %}{{ lesson.name }} / {{ lesson.getCourse.name }} / StudyOn{% endblock %}
 
 {% block body %}
-    <h1>{{ lesson.Name }}</h1>
+    <h2>{{ lesson.Name }}</h2>
 
-    <h2>
+    <p>
         Курс
         <a href="{{ path('course_show', {'id': lesson.getCourse.id}) }}">{{ lesson.getCourse.name }}</a>
-    </h2>
+    </p>
 
     <div class="row">
-        <a class="btn btn-outline-dark m-sm-1" href="{{ path('lesson_edit', {'id': lesson.id}) }}">Редактировать</a>
+        <a class="btn btn-outline-dark ml-3 mr-2 mt-3 btn-sm" href="{{ path('lesson_edit', {'id': lesson.id}) }}">Редактировать</a>
         {{ include('lesson/_delete_form.html.twig') }}
     </div>
 
-    <h3>Содержимое</h3>
-    {{ lesson.content }}
+    <div class="card mt-3">
+        <div class="card-body">
+            {{ lesson.content }}
+        </div>
+    </div>
 {% endblock %}

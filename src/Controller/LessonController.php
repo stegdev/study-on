@@ -25,7 +25,7 @@ class LessonController extends AbstractController
         $lesson = new Lesson();
         $courseId = $request->query->get('course_id');
         $course = $this->getDoctrine()->getManager()->getRepository(Course::class)->find($courseId);
-        if($course) {
+        if ($course) {
             $lesson->setCourse($course);
 
             $form = $this->createForm(LessonType::class, $lesson);
@@ -36,11 +36,11 @@ class LessonController extends AbstractController
                 $entityManager->persist($lesson);
                 $entityManager->flush();
 
-                return $this->redirectToRoute('course_show', ['id' => $lesson->getCourse()->getId()]);
+                $response = $this->redirectToRoute('course_show', ['id' => $lesson->getCourse()->getId()]);
+                return $response;
             }
-        }
-        else {
-            $this->render('404.html.twig');
+        } else {
+            return $this->render('404.html.twig');
         }
 
         return $this->render('lesson/new.html.twig', [

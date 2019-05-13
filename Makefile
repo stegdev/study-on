@@ -33,8 +33,6 @@ encore_prod:
 encore_restart_watch:
 	@${COMPOSE} run node yarn encore dev --watch
 phpunit:
-	@${CONSOLE} doctrine:database:create --env=test --if-not-exists
-	@${CONSOLE} doctrine:migrations:migrate --env=test -n
 	@${PHP} bin/phpunit
 
 rebuild:

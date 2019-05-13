@@ -3,5 +3,6 @@
 {% block title %}Error 404{% endblock %}
 
 {% block body %}
-    <h1>Страница не обнаружена</h1>
+    <h1>К сожалению, запрашиваемая Вами страница не найдена.</h1>
+    <a class="btn btn-outline-dark mt-3 btn-sm" href="{{ path('course_index') }}">Перейти на страницу курсов</a>
 {% endblock %}
