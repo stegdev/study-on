@@ -68,31 +68,49 @@ class CourseControllerTest extends AbstractTest
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
-        $link = $crawler->filter('.row .col-md-6 a')->eq(3)->link();
+        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
         $crawler = $client->click($link);
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertSame('Качество кода', $crawler->filter('h1')->text());
         $crawler = $client->clickLink('Редактировать курс');
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertSame('Качество кода', $crawler->filter('h1')->text());
-//        $client->submitForm('Сохранить', ['course[name]'=>'New Course']);
-//        $crawler = $client->followRedirect();
-//        $this->assertSame(200, $client->getResponse()->getStatusCode());
-//        $this->assertSame('Курсы', $crawler->filter('h1')->text());
-//        $this->assertSame('New Course', $crawler->filter('.card-title')->eq(4)->text());
+        $client->submitForm('Сохранить', ['course[name]'=>'New Course 90909', 'course[description]'=>'New description']);
+        $crawler = $client->followRedirect();
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('Курсы', $crawler->filter('h1')->text());
+        $this->assertSame('New Course 90909', $crawler->filter('.card-title')->eq(4)->text());
     }
-    public function testFailEditCourse()
+    public function testTooLongName()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/');
+        $crawler = $client->clickLink('Новый курс');
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('Новый курс', $crawler->filter('h1')->text());
+        $s = substr( str_shuffle( str_repeat( '0123456789', 100 ) ), 0, 300 );
+        $crawler = $client->submitForm('Сохранить', ['course[name]'=>$s, 'course[description]'=>'my description']);
+        //print_r($crawler);
+        $this->assertSame('Новый курс', $crawler->filter('h1')->text());
+        $this->assertCount(1, $crawler->filter('.form-error-message'));
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+    }
+    public function testCourse404()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/courses/25');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+    public function testCourseEdit404()
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
-        $link = $crawler->filter('.row .col-md-6 a')->eq(3)->link();
+        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
         $crawler = $client->click($link);
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertSame('Качество кода', $crawler->filter('h1')->text());
         $crawler = $client->clickLink('Редактировать');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
-//        $client->submitForm('Сохранить', ['course[name]'=>'']);
-//        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $client->request('GET', '/courses/25/edit');
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 }
