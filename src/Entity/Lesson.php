@@ -25,6 +25,10 @@ class Lesson
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\LessThan(
+     *     value = 255
+     * )
      */
     private $name;
 

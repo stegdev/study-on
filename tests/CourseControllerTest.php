@@ -98,7 +98,7 @@ class CourseControllerTest extends AbstractTest
     public function testCourse404()
     {
         $client = static::createClient();
-        $client->request('GET', '/courses/25');
+        $client->request('GET', '/courses/250000');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
     public function testCourseEdit404()
@@ -110,7 +110,7 @@ class CourseControllerTest extends AbstractTest
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertSame('Качество кода', $crawler->filter('h1')->text());
         $crawler = $client->clickLink('Редактировать');
-        $client->request('GET', '/courses/25/edit');
+        $client->request('GET', '/courses/200500/edit');
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 }
