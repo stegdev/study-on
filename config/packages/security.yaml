@@ -1,13 +1,25 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            id: App\Security\UserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: true
+            guard:
+                authenticators:
+                    - App\Security\StudyOnAuthenticator
+            logout:
+                path: app_logout
+                target: /login
+            remember_me:
+                secret: "%kernel.secret%"
+                lifetime: 604800
+#            access_denied_handler: App\Security\AccessDeniedHandler
 
             # activate different ways to authenticate
 
@@ -20,5 +32,4 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/lessons/new(.+), roles: IS_AUTHENTICATED_FULLY }

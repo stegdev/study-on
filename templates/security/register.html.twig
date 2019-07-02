@@ -1,0 +1,43 @@
+{% form_theme form 'form_errors.html.twig' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация / Study-on
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card card-body bg-light mt-3">
+                {{ form_errors(form) }}
+                {% if error %}
+                    {% if error is iterable %}
+                        {% for er in error %}
+                            <div class="alert alert-danger">{{ er }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endif %}
+                {% endif %}
+                <h3 class="mb-3 font-weight-normal">Регистрация</h3>
+                {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_row(form.email) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.password) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.repeatPassword) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.save) }}
+                </div>
+                <div class="text-center mt-3">
+                    Уже зарегистрированы?
+                    <a href="{{ path('app_login') }}">Войти</a>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

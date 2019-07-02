@@ -3,5 +3,21 @@
         <a href="{{ path('course_index') }}" class="navbar-brand d-flex align-items-center">
             <strong>Study-On</strong>
         </a>
+        {% if is_granted('ROLE_USER') %}
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ path('profile') }}">{{ app.user.email }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ path('app_logout') }}">Выйти</a>
+                </li>
+            </ul>
+        {% else %}
+            <ul class="nav navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ path('app_login') }}">Войти</a>
+                </li>
+            </ul>
+        {% endif %}
     </div>
 </div>
