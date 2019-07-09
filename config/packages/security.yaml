@@ -19,7 +19,7 @@ security:
             remember_me:
                 secret: "%kernel.secret%"
                 lifetime: 604800
-#            access_denied_handler: App\Security\AccessDeniedHandler
+            access_denied_handler: App\Security\AccessDeniedHandler
 
             # activate different ways to authenticate
 

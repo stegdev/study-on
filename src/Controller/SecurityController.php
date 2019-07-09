@@ -58,7 +58,7 @@ class SecurityController extends AbstractController
                             'error' => "Сервис временно недоступен. Попробуйте зарегистрироваться позднее"
                         ));
                     }
-                    if (array_key_exists('code', $regResponse)) {
+                                        if (array_key_exists('code', $regResponse)) {
                         return $this->render('security/register.html.twig', array(
                             'form' => $form->createView(),
                             'error' => $regResponse['message']
@@ -66,8 +66,8 @@ class SecurityController extends AbstractController
                     } else {
                         $user = new BillingUser();
                         $user->setEmail(trim($formData['email']));
-//                        $user->setApiToken($regResponse['token']);
-//                        $user->setRoles($regResponse['roles']);
+                        $user->setApiToken($regResponse['token']);
+                        $user->setRoles($regResponse['roles']);
                         return $guardHandler->authenticateUserAndHandleSuccess(
                             $user,
                             $request,

@@ -23,5 +23,7 @@
                 {% endfor %}
             </div>
         </div>
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
     <a class="btn btn-outline-dark ml-3 mr-2 mt-3 btn-sm" href="{{ path('course_new') }}">Новый курс</a>
+    {% endif %}
 {% endblock %}

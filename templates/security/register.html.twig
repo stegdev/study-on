@@ -7,8 +7,7 @@
 {% block body %}
     <div class="row">
         <div class="col-md-6 mx-auto">
-            <div class="card card-body bg-light mt-3">
-                {{ form_errors(form) }}
+                           {{ form_errors(form) }}
                 {% if error %}
                     {% if error is iterable %}
                         {% for er in error %}
@@ -37,7 +36,7 @@
                     <a href="{{ path('app_login') }}">Войти</a>
                 </div>
                 {{ form_end(form) }}
-            </div>
+
         </div>
     </div>
 {% endblock %}
