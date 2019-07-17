@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190412175025 extends AbstractMigration
+final class Version20190717083616 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -24,10 +24,11 @@ final class Version20190412175025 extends AbstractMigration
 
         $this->addSql('CREATE SEQUENCE course_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE lesson_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE course (id INT NOT NULL, name VARCHAR(255) NOT NULL, description VARCHAR(1000) DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE lesson (id INT NOT NULL, course_id_id INT NOT NULL, name VARCHAR(255) NOT NULL, content TEXT NOT NULL, nubmer INT DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_F87474F396EF99BF ON lesson (course_id_id)');
-        $this->addSql('ALTER TABLE lesson ADD CONSTRAINT FK_F87474F396EF99BF FOREIGN KEY (course_id_id) REFERENCES course (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('CREATE TABLE course (id INT NOT NULL, name VARCHAR(255) NOT NULL, description VARCHAR(255) DEFAULT NULL, slug VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_169E6FB9989D9B62 ON course (slug)');
+        $this->addSql('CREATE TABLE lesson (id INT NOT NULL, course_id INT NOT NULL, name VARCHAR(255) NOT NULL, content TEXT NOT NULL, number INT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IDX_F87474F3591CC992 ON lesson (course_id)');
+        $this->addSql('ALTER TABLE lesson ADD CONSTRAINT FK_F87474F3591CC992 FOREIGN KEY (course_id) REFERENCES course (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema) : void
@@ -35,8 +36,7 @@ final class Version20190412175025 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE lesson DROP CONSTRAINT FK_F87474F396EF99BF');
+        $this->addSql('ALTER TABLE lesson DROP CONSTRAINT FK_F87474F3591CC992');
         $this->addSql('DROP SEQUENCE course_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE lesson_id_seq CASCADE');
         $this->addSql('DROP TABLE course');

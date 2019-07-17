@@ -6,6 +6,8 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use App\Service\DecodePayload;
+use App\Service\BillingClient;
 
 class UserProvider implements UserProviderInterface
 {
@@ -42,13 +44,18 @@ class UserProvider implements UserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
+        $billingClient = new BillingClient($_ENV['BILLING_HOST']);
+
         if (!$user instanceof BillingUser) {
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         }
+        $expTime = $billingClient->decodePayload($user->getApiToken())->exp;
+        $currentDate = ((new \DateTime())->modify('+1 minute'))->getTimestamp();
+        if ($currentDate > $expTime) {
+            $response = $billingClient->sendRefreshRequest($user->getRefreshToken());
+            $user->setApiToken($response['token']);
+        }
 
-        // Return a User object after making sure its data is "fresh".
-        // Or throw a UsernameNotFoundException if the user no longer exists.
-        //throw new \Exception('TODO: fill in refreshUser() inside '.__FILE__);
         return $user;
     }
 

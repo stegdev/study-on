@@ -70,7 +70,7 @@ class StudyOnAuthenticator extends AbstractFormLoginAuthenticator
         } else {
             $user = $userProvider->loadUserByUsername($credentials['email']);
             $user->setApiToken($loginResponse['token']);
-//            $user->setRefreshToken($loginResponse['refresh_token']);
+            $user->setRefreshToken($loginResponse['refresh_token']);
             $user->setRoles($loginResponse['roles']);
             return $user;
         }

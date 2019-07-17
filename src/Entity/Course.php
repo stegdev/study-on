@@ -4,11 +4,17 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CourseRepository")
+ * @UniqueEntity(
+ *    fields={"name"},
+ *    message="Данное имя курса занято. Попробуйте другое"
+ * )
  */
 class Course
 {
@@ -36,9 +42,13 @@ class Course
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Lesson", mappedBy="course", orphanRemoval=true)
-     * @ORM\OrderBy({"number"="ASC"})
      */
     private $lessons;
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -79,7 +89,10 @@ class Course
      */
     public function getLessons(): Collection
     {
-        return $this->lessons;
+        $orderBy = (Criteria::create())->orderBy([
+            'number' => Criteria::ASC,
+        ]);
+        return $this->lessons->matching($orderBy);
     }
 
     public function addLesson(Lesson $lesson): self
@@ -102,6 +115,17 @@ class Course
             }
         }
 
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
         return $this;
     }
 }

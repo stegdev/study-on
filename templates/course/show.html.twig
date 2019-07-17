@@ -8,7 +8,7 @@
     <h2>Уроки</h2>
 
     <ol>
-        {% for lesson in course.lessons %}
+        {% for lesson in course.getLessons %}
             <li><a href ="{{ path('lesson_show', {'id': lesson.id}) }}">{{ lesson.name }}</a></li>
         {% endfor %}
     </ol>
@@ -17,7 +17,7 @@
     <div class="row">
         <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_index') }}">К списку курсов</a>
         {% if is_granted('ROLE_SUPER_ADMIN') %}
-            <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_edit', {'id': course.id}) }}">Редактировать курс</a>
+            <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_edit', {slug: course.slug}) }}">Редактировать курс</a>
             <a class="btn btn-outline-info m-sm-1" href="{{ path('lesson_new', {'course_id': course.id}) }}">Добавить урок</a>
             {{ include('course/_delete_form.html.twig') }}
         {% endif %}

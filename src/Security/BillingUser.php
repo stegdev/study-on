@@ -7,8 +7,23 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class BillingUser implements UserInterface
 {
     private $email;
+
     private $apiToken;
+
+    private $refreshToken;
+
     private $roles = [];
+
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+    public function setRefreshToken($refreshToken): self
+    {
+        $this->refreshToken = $refreshToken;
+        return $this;
+    }
+
     public function getApiToken(): ?string
     {
         return $this->apiToken;

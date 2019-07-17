@@ -13,7 +13,7 @@
                             <div class="card-body">
                                 <h3 class="card-title">{{ course.name }}</h3>
                                 <p class="card-text">{{ course.description }}</p>
-                                <a class="card-link" href="{{ path('course_show', {'id':course.id}) }}">Пройти курс</a>
+                                <a class="card-link" href="{{ path('course_show', {slug: course.slug}) }}">Пройти курс</a>
                             </div>
 
                         </div>

@@ -7,7 +7,7 @@
 
     <p>
         Курс
-        <a href="{{ path('course_show', {'id': lesson.getCourse.id}) }}">{{ lesson.getCourse.name }}</a>
+        <a href="{{ path('course_show', {'slug': lesson.getCourse.getSlug}) }}">{{ lesson.getCourse.name }}</a>
     </p>
     {% if is_granted('ROLE_SUPER_ADMIN') %}
     <div class="row">

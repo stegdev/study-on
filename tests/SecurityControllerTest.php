@@ -81,7 +81,6 @@ class SecurityControllerTest extends AbstractTest
         $this->assertTrue($crawler->filter('html:contains("Bad credentials, please verify your username and password")')->count() > 0);
     }
 
-
     public function testUserLogout()
     {
         $client = $this->authClient('simpleUser@gmail.com', 'passwordForSimpleUser');

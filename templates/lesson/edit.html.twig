@@ -6,7 +6,7 @@
     <h1>{{ lesson.name }}</h1>
     <p>
         Курс
-        <a href="{{ path('course_show', {'id': lesson.getCourse.id}) }}">{{ lesson.getCourse.name }}</a>
+        <a href="{{ path('course_show', {'slug': lesson.getCourse.slug}) }}">{{ lesson.getCourse.name }}</a>
     </p>
 
 

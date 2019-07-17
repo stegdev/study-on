@@ -5,6 +5,7 @@ use App\Entity\Lesson;
 use App\Entity\Course;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Cocur\Slugify\Slugify;
 
 class CourseFixtures extends Fixture
 {
@@ -28,6 +29,8 @@ class CourseFixtures extends Fixture
         for ($i = 0; $i < 5; $i++)
         {
             $course = new Course();
+            $slugify = new Slugify();
+            $course->setSlug($slugify->slugify($course_names[$i]));
             $course->setName($course_names[$i]);
             $course->setDescription($course_descriptions[$i]);
             $manager->persist($course);
