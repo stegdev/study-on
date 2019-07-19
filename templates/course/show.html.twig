@@ -1,24 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ course.name }} / StudyOn{% endblock %}
+{% block title %}
+    {{course.name}}
+    / Study-on
+{% endblock %}
 
 {% block body %}
-    <h1>{{ course.name }}</h1>
-    <p>{{ course.description }}</p>
-    <h2>Уроки</h2>
-
-    <ol>
-        {% for lesson in course.getLessons %}
-            <li><a href ="{{ path('lesson_show', {'id': lesson.id}) }}">{{ lesson.name }}</a></li>
-        {% endfor %}
-    </ol>
-
-
+    <h2>{{course.name}}</h2>
+    <p>{{course.description}}</p>
+    {% if course.lessons is not empty %}
+        <h3>Уроки</h3>
+        <ol>
+            {% for lesson in course.lessons %}
+                <li>
+                    <a class="lessonShow" href="{{ path('lesson_show', {'id': lesson.id}) }}">{{lesson.name}}</a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>В данном курсе нет ни одного урока.</p>
+    {% endif %}
     <div class="row">
-        <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_index') }}">К списку курсов</a>
+        <a class="btn btn-outline-dark mr-2 mt-3 ml-3 btn-sm" href="{{ path('course_index') }}">К списку курсов</a>
+        {% if is_granted('ROLE_USER') %}
+            {% if course.transaction_type is not defined %}
+                {% if course.type is same as('rent') %}
+                    <a class="{{ course.price > user_balance ? 'btn btn-outline-warning mr-2 mt-3 btn-sm text-dark disabled' : 'btn btn-outline-warning mr-2 mt-3 btn-sm text-dark' }}" data-target="#confirmBuyModal" data-toggle="modal" href="#">Арендовать курс</a>
+                {% elseif course.type is same as('buy') %}
+                    <a class="{{ course.price > user_balance ? 'btn btn-outline-primary mr-2 mt-3 btn-sm text-dark disabled' : 'btn btn-outline-primary mr-2 mt-3 btn-sm text-dark' }}" data-target="#confirmBuyModal" data-toggle="modal" href="#">Купить курс</a>
+                {% endif %}
+                <div aria-hidden="true" aria-labelledby="exampleModalLongTitle" class="modal fade" id="confirmBuyModal" role="dialog" tabindex="-1">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Подтвердите действие</h5>
+                                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% if course.price is defined %}
+                                <div class="modal-body">
+                                    С вашего счета будет списано
+                                    {{ course.price }}$. Продолжить?
+                                </div>
+                            {% endif %}
+                            <div class="modal-footer">
+                                <a class="btn btn-default" data-dismiss="modal" type="button">Отмена</a>
+                                {{ include('course/_pay_form.html.twig') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         {% if is_granted('ROLE_SUPER_ADMIN') %}
-            <a class="btn btn-outline-dark m-sm-1" href="{{ path('course_edit', {slug: course.slug}) }}">Редактировать курс</a>
-            <a class="btn btn-outline-info m-sm-1" href="{{ path('lesson_new', {'course_id': course.id}) }}">Добавить урок</a>
+            <a class="btn btn-outline-dark mr-2 mt-3 btn-sm" href="{{ path('course_edit', {slug: course.slug}) }}">Редактировать курс</a>
+            <a class="btn btn-outline-info mt-3 btn-sm" href="{{ path('lesson_new', {'course_id': course.id}) }}">Добавить урок</a>
             {{ include('course/_delete_form.html.twig') }}
         {% endif %}
     </div>

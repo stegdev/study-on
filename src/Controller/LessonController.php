@@ -1,15 +1,20 @@
 <?php
+
 namespace App\Controller;
+
 use App\Entity\Lesson;
 use App\Entity\Course;
 use App\Form\LessonType;
+use App\Service\BillingClient;
 use App\Repository\LessonRepository;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Annotation\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 /**
  * @Route("/lessons")
  */
@@ -53,11 +58,17 @@ class LessonController extends AbstractController
      * @Route("/{id}", name="lesson_show", requirements={"id"="\d{1,10}"}, methods={"GET"})
      * @IsGranted("ROLE_USER")
      */
-    public function show(Lesson $lesson): Response
+    public function show(Lesson $lesson, LessonRepository $repository, BillingClient $billingClient): Response
     {
-        return $this->render('lesson/show.html.twig', [
-            'lesson' => $lesson
-        ]);
+        $id = $lesson->getCourse()->getId();
+        $parentCourse = $repository->getCombinedParentCourse($id, $billingClient, $this->getUser());
+        if ((($parentCourse['type'] == 'rent' || $parentCourse['type'] == 'buy') && array_key_exists('transaction_type', $parentCourse)) || $parentCourse['type'] == 'free') {
+            return $this->render('lesson/show.html.twig', [
+                'lesson' => $lesson
+            ]);
+        } else {
+            throw new HttpException(403);
+        }
     }
     /**
      * @Route("/{id}/edit", name="lesson_edit", methods={"GET","POST"})

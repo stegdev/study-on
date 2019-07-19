@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}История транзакций / Study-on
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+    <div class="col-md-12">
+        <h3>История транзакций</h3>
+        <br>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Дата/время добавления</th>
+                <th scope="col">Тип</th>
+                <th scope="col">Курс</th>
+                <th scope="col">Сумма</th>
+                <th scope="col">Активна до</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.created_at| date("d.m.Y / h:i") }}</td>
+                    {% if transaction.type is same as('payment') %}
+                        <td>Оплата</td>
+                    {% else %}
+                        <td>Зачисление средств</td>
+                    {% endif %}
+                    {% if transaction.course_code is defined %}
+                        <td>
+                            {% if transaction.course_code in slugs %}
+                                <a href="{{ path('course_show', {slug: transaction.course_code}) }}">{{ transaction.course_code }}</a>
+                            {% else %}
+                                {{ transaction.course_code }}
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td>-</td>
+                    {% endif %}
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.expires_at| date("d.m.Y / h:i")  }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </tbody>
+        </table>
+        <a class="btn btn-primary" href="{{ path('profile') }}">Назад к профилю</a>
+    </div>
+    </div>{% endblock %}

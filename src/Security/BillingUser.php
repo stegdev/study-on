@@ -7,20 +7,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class BillingUser implements UserInterface
 {
     private $email;
-
     private $apiToken;
-
-    private $refreshToken;
-
+    private $refreshToken​;
     private $roles = [];
 
     public function getRefreshToken(): ?string
     {
-        return $this->refreshToken;
+        return $this->refreshToken​;
     }
+
     public function setRefreshToken($refreshToken): self
     {
-        $this->refreshToken = $refreshToken;
+        $this->refreshToken​ = $refreshToken;
         return $this;
     }
 
@@ -28,20 +26,24 @@ class BillingUser implements UserInterface
     {
         return $this->apiToken;
     }
+
     public function setApiToken(string $apiToken): self
     {
         $this->apiToken = $apiToken;
         return $this;
     }
+
     public function getEmail(): ?string
     {
         return $this->email;
     }
+
     public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
     }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -51,6 +53,7 @@ class BillingUser implements UserInterface
     {
         return (string) $this->email;
     }
+
     /**
      * @see UserInterface
      */
@@ -61,11 +64,13 @@ class BillingUser implements UserInterface
         $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
         return $this;
     }
+
     /**
      * @see UserInterface
      */
@@ -80,6 +85,7 @@ class BillingUser implements UserInterface
     {
         // not needed for apps that do not check user passwords
     }
+
     /**
      * @see UserInterface
      */

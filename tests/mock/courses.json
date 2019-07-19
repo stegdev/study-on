@@ -1,0 +1,30 @@
+[
+  {
+    "code": "vvedenie-v-javascript",
+    "type": "rent",
+    "price": 25.55
+  },
+  {
+    "code": "osnovy-javascript",
+    "type": "buy",
+    "price": 20.25
+  },
+  {
+    "code": "java-dlya-nachinayushchih",
+    "type": "free"
+  },
+  "code": "kachestvo-koda",
+  "type": "rent",
+  "price": 35.45
+  },
+  "code": "'struktury-dannyh",
+  "type": "buy",
+  "price": 23,85
+  },
+  {
+    "code": "symfony-course-from-absolute-zero",
+    "type": "buy",
+    "price": 5000.0
+  }
+]
+

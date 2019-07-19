@@ -11,33 +11,31 @@ use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use App\Service\BillingClient;
+use App\Security\BillingUser;
 
 class StudyOnAuthenticator extends AbstractFormLoginAuthenticator
 {
     use TargetPathTrait;
-
     private $urlGenerator;
     private $csrfTokenManager;
-    private $bilingclient;
-
-    public function __construct(UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, BillingClient $bilingclient)
+    private $billingClient;
+    public function __construct(UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, BillingClient $billingClient)
     {
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
-        $this->bilingclient = $bilingclient;
+        $this->billingClient = $billingClient;
     }
-
     public function supports(Request $request)
     {
         return 'app_login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
-
     public function getCredentials(Request $request)
     {
         $credentials = [
@@ -49,19 +47,16 @@ class StudyOnAuthenticator extends AbstractFormLoginAuthenticator
             Security::LAST_USERNAME,
             $credentials['email']
         );
-
         return $credentials;
     }
-
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
-
         try {
-            $loginResponse = $this->bilingclient->sendLoginRequest($credentials['email'], $credentials['password']);
+            $loginResponse = $this->billingClient->sendLoginRequest($credentials['email'], $credentials['password']);
         } catch (HttpException $ex) {
             throw new CustomUserMessageAuthenticationException("Сервис временно недоступен. Попробуйте авторизоваться позднее");
         }
@@ -75,21 +70,17 @@ class StudyOnAuthenticator extends AbstractFormLoginAuthenticator
             return $user;
         }
     }
-
     public function checkCredentials($credentials, UserInterface $user)
     {
         return true;
     }
-
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
-
         return new RedirectResponse($this->urlGenerator->generate('course_index'));
     }
-
     protected function getLoginUrl()
     {
         return $this->urlGenerator->generate('app_login');

@@ -1,0 +1,25 @@
+[
+  {
+    "id": 34,
+    "created_at": "2019-07-17T12:34:58+00:00",
+    "type": "deposit",
+    "amount": 1000.0,
+    "expires_at": "2019-07-24T12:34:58+00:00"
+  },
+  {
+    "id": 38,
+    "created_at": "2019-07-17T16:39:29+00:00",
+    "type": "payment",
+    "course_code": "vvedenie-v-javascript",
+    "amount": 25.55,
+    "expires_at": "2019-07-24T16:39:29+00:00"
+  },
+  {
+    "id": 39,
+    "created_at": "2019-07-17T16:39:50+00:00",
+    "type": "payment",
+    "course_code": "osnovy-javascript",
+    "amount": 20.25,
+    "expires_at": "2019-07-24T16:39:50+00:00"
+  }
+]

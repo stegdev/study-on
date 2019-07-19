@@ -6,11 +6,18 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use App\Service\DecodePayload;
+use App\Security\BillingUser;
 use App\Service\BillingClient;
 
 class UserProvider implements UserProviderInterface
 {
+    private $billingClient;
+
+    public function __construct(BillingClient $billingClient)
+    {
+        $this->billingClient = $billingClient;
+    }
+
     /**
      * Symfony calls this method if you use features like switch_user
      * or remember_me.
@@ -42,20 +49,17 @@ class UserProvider implements UserProviderInterface
      *
      * @return UserInterface
      */
-    public function refreshUser(UserInterface $user)
+        public function refreshUser(UserInterface $user)
     {
-        $billingClient = new BillingClient($_ENV['BILLING_HOST']);
-
         if (!$user instanceof BillingUser) {
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         }
-        $expTime = $billingClient->decodePayload($user->getApiToken())->exp;
+        $expTime = $this->billingClient->decodePayload($user->getApiToken())->exp;
         $currentDate = ((new \DateTime())->modify('+1 minute'))->getTimestamp();
         if ($currentDate > $expTime) {
-            $response = $billingClient->sendRefreshRequest($user->getRefreshToken());
+            $response = $this->billingClient->sendRefreshRequest($user->getRefreshToken());
             $user->setApiToken($response['token']);
         }
-
         return $user;
     }
 

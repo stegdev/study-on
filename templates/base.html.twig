@@ -9,13 +9,27 @@
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
+    <header>
+        {{ include('navbar.html.twig') }}
+
+    </header>
 </head>
 
 <body>
-{{ include('navbar.html.twig') }}
 <div class="container">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
     {% block body %}{% endblock %}
     {% block javascripts %}
+
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </div>
