@@ -5,8 +5,9 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\DataFixtures\CourseFixtures;
 use App\Tests\AbstractTest;
-use App\Tests\Mock\BillingClientMock;
+use App\Tests\mock\BillingClientMock;
 use App\Entity\Course;
+
 class LessonControllerTest extends AbstractTest
 {
     public function getFixtures(): array
@@ -29,20 +30,6 @@ class LessonControllerTest extends AbstractTest
         return $client;
     }
 
-    public function testShowLesson()
-    {
-        $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
-        $crawler = $client->request('GET', '/courses/');
-        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
-        $link = $crawler->filter('ol li a')->eq(1)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Советы по стилю кода', $crawler->filter('h2')->text());
-    }
-
     public function testErrorLesson()
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
@@ -53,75 +40,46 @@ class LessonControllerTest extends AbstractTest
     public function testAddLesson()
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
-        $crawler = $client->request('GET', '/courses/');
-        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
+        $client->clickLink('Пройти курс');
         $crawler = $client->clickLink('Добавить урок');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Создание урока', $crawler->filter('h1')->text());
-        $client->submitForm('Save', ['lesson[name]'=>'my name', 'lesson[content]'=>'my content',
-            'lesson[number]'=>10]);
+        $form = $crawler->selectButton('Save')->form();
+        $form["lesson[name]"] = "Новый урок";
+        $form["lesson[content]"] = "Описание нового урока";
+        $form["lesson[number]"] = 5;
+        $client->submit($form);
         $crawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
-        $this->assertCount(3, $crawler->filter('ol li a'));
+        $this->assertEquals(4, $crawler->filter('.lessonShow')->count());
     }
 
     public function testEditLesson()
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
-        $crawler = $client->request('GET', '/courses/');
-        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
-        $link = $crawler->filter('ol li a')->eq(1)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Советы по стилю кода', $crawler->filter('h2')->text());
-        $crawler = $client->clickLink('Редактировать');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Советы по стилю кода',
-            $crawler->filter('h1')->text());
-        $client->submitForm('Сохранить', ['lesson[name]'=>'my name']);
-        $crawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('my name', $crawler->filter('h2')->text());
-        $crawler = $client->clickLink('Качество кода');
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertCount(3, $crawler->filter('ol li a'));
-        $this->assertSame('my name', $crawler->filter('ol li a')->eq(1)->text());
+        $crawler = $client->clickLink('Пройти курс');
+        $link = $crawler->filter('.lessonShow')->first()->text();
+        $client->clickLink($link);
+        $client->clickLink('Редактировать');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
     public function testDeleteLesson()
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
-        $crawler = $client->request('GET', '/courses/');
-        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
-        $link = $crawler->filter('ol li a')->eq(1)->link();
-        $crawler = $client->click($link);
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Советы по стилю кода', $crawler->filter('h2')->text());
-        $client->submitForm('Удалить');
-        $crawler = $client->followRedirect();
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $crawler = $client->clickLink('Пройти курс');
+        $link = $crawler->filter('a')->eq(3);
+        $crawler = $client->clickLink($link->text());
+        $form = $crawler->selectButton('Удалить')->form();
+        $crawler = $client->submit($form);
         $this->assertCount(2, $crawler->filter('ol li a'));
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
     }
 
     public function testNotBlank()
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
         $crawler = $client->request('GET', '/courses/');
-        $link = $crawler->filter('a:contains("Пройти курс")')->eq(3)->link();
+        $link = $crawler->filter('a:contains("Пройти курс")')->eq(0)->link();
         $crawler = $client->click($link);
         $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertSame('Качество кода', $crawler->filter('h1')->text());
+        $this->assertSame('Введение в JavaScript', $crawler->filter('h2')->text());
         $crawler = $client->clickLink('Добавить урок');
         $this->assertSame('Создание урока', $crawler->filter('h1')->text());
         $crawler = $client->submitForm('Save', ['lesson[name]'=>'', 'lesson[content]'=>'Content',

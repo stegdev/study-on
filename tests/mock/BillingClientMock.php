@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Mock;
+namespace App\Tests\mock;
 
 use App\Service\BillingClient;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -46,7 +46,7 @@ class BillingClientMock extends BillingClient
             return ['token' => $this->createToken($username), 'roles' => ["ROLE_USER"], 'refresh_token' => '6c511dd5e0e2ad0ae0dbd82aa1a89160385a611f622cd1d6e9908713e0f24f38d0c3189f5c1e8b419412391a6e8680c7035033d3c0f2ed7f6b192b5fdfa265be'];
         } elseif ($username == $trueAdminName && $password == $trueAdminPassword) {
             return ['token' => $this->createToken($username), 'roles' => ["ROLE_USER", "ROLE_SUPER_ADMIN"], 'refresh_token' => 'ed2e20e571a9284abb0c6cc8d00a2abc01bd2dcc9f702024733aa941b6be31c91fbdcb9e348b372be32f64c90c28cd52b175a8d44aa13fbff9ae70a26485ce10'];
-        } elseif ($username == "throwException@mail.ru") {
+        } elseif ($username == "Exception@mail.ru") {
             throw new HttpException(500);
         } else {
             return ['code' => 401, 'message' => 'Bad credentials, please verify your username and password'];
@@ -61,7 +61,7 @@ class BillingClientMock extends BillingClient
             return ['code' => 400, 'message' => ["Email already exists"]];
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return ['code' => 400, 'message' => ['Invalid email']];
-        } elseif ($email == "throwException@mail.ru") {
+        } elseif ($email == "Exception@mail.ru") {
             throw new HttpException(500);
         } else {
             return ['token' => $this->createToken($email), 'roles' => ["ROLE_USER"], 'refresh_token' => 'refreshToken'];
@@ -72,6 +72,7 @@ class BillingClientMock extends BillingClient
     {
         return ['token' => $this->createToken('user@gmail.com')];
     }
+
     public function getCurentUserBalance($token)
     {
         if (isset($token)) {
@@ -83,6 +84,7 @@ class BillingClientMock extends BillingClient
     {
         return $this->coursesResponse;
     }
+
     public function getCourseByCode($slug)
     {
         return array_filter($this->coursesResponse, function ($var) use ($slug) {
@@ -109,7 +111,6 @@ class BillingClientMock extends BillingClient
             });
         }
     }
-
     public function getAllTransactions($token)
     {
         if (isset($token)) {

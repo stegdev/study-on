@@ -114,4 +114,10 @@ class SecurityControllerTest extends AbstractTest
         $this->assertTrue($crawler->filter('html:contains("Invalid email")')->count() > 0);
     }
 
+    public function testRegWithBillingError()
+    {
+        $client = static::createClient();
+        $crawler = $client->submit($this->fillRegForm($client, 'Exception@mail.ru', '1234567', '1234567'));
+        $this->assertTrue($crawler->filter('html:contains("Сервис временно недоступен. Попробуйте зарегистрироваться позднее")')->count() > 0);
+    }
 }

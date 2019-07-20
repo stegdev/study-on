@@ -39,7 +39,14 @@
                         <td>-</td>
                     {% endif %}
                     <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.expires_at| date("d.m.Y / h:i")  }}</td>
+                    <td>
+                        {% if transaction.type is same as('payment') %}
+                        {{ transaction.expires_at| date("d.m.Y / h:i")  }}
+
+                        {% else %}
+                            {{ "" }}
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
