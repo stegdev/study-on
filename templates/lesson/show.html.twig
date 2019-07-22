@@ -10,12 +10,11 @@
         <a href="{{ path('course_show', {'slug': lesson.getCourse.getSlug}) }}">{{ lesson.getCourse.name }}</a>
     </p>
     {% if is_granted('ROLE_SUPER_ADMIN') %}
-    <div class="row">
-        <a class="btn btn-outline-dark ml-3 mr-2 mt-3 btn-sm" href="{{ path('lesson_edit', {'id': lesson.id}) }}">Редактировать</a>
-        {{ include('lesson/_delete_form.html.twig') }}
-    </div>
+        <div class="row">
+            <a class="btn btn-outline-dark ml-3 mr-2 mt-3 btn-sm" href="{{ path('lesson_edit', {'id': lesson.id}) }}">Редактировать</a>
+            {{ include('lesson/_delete_form.html.twig') }}
+        </div>
     {% endif %}
-
     <div class="card mt-3">
         <div class="card-body">
             {{ lesson.content }}

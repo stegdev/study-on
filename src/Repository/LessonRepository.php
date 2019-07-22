@@ -20,44 +20,4 @@ class LessonRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Lesson::class);
     }
-
-    public function getCombinedParentCourse($courseId, $billingClient, $user)
-    {
-        $entityManager = $this->getEntityManager();
-        $course = $entityManager->getRepository(Course::class)->findOneBy(['id' => $courseId]);
-        if (!$course) {
-            throw new HttpException(404, 'Course not found');
-        } else {
-            return $entityManager->getRepository(Course::class)->findOneCombined($course->getSlug(), $billingClient, $user);
-        }
-    }
-
-    // /**
-    //  * @return Lesson[] Returns an array of Lesson objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Lesson
-    {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

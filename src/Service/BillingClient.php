@@ -1,6 +1,10 @@
 <?php
+
 namespace App\Service;
+
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Cocur\Slugify\Slugify;
+
 class BillingClient
 {
     private $billingHost;
@@ -44,6 +48,12 @@ class BillingClient
     public function buyCourse($slug, $token)
     {
         return $this->execCurl('POST', '', '/api/v1/courses/'.$slug.'/pay', $token);
+    }
+
+    public function addCourse($course, $token)
+    {
+        $slugify = new Slugify();
+        return $this->execCurl("POST", json_encode(['code' => $slugify->slugify($course['name']), 'title' => $course['description'], 'type' => $course['type'], 'price' => $course['price']]), '/api/v1/courses', $token);
     }
 
     public function getPaymentTransactions($token)

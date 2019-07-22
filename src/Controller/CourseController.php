@@ -24,28 +24,53 @@ class CourseController extends AbstractController
      */
     public function index(CourseRepository $courseRepository, BillingClient $billingClient): Response
     {
-        return $this->render('course/index.html.twig', [
-            'courses' => $courseRepository->findAllCombined($billingClient, $this->getUser())
+        $auth_checker = $this->get('security.authorization_checker');
+        if ($auth_checker->isGranted('ROLE_USER')) {
+            return $this->render('course/index.html.twig', [
+                'courses' => $courseRepository->findAllCombined($billingClient->getCourses(), $billingClient->getPaymentTransactions($this->getUser()->getApiToken()))
         ]);
+        } else {
+            return $this->render('course/index.html.twig', [
+                'courses' => $courseRepository->findAllCombined($billingClient->getCourses(), null)
+            ]);
+        }
     }
     /**
      * @Route("/new", name="course_new", methods={"GET","POST"})
      * @IsGranted("ROLE_SUPER_ADMIN")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, BillingClient $billingClient): Response
     {
-        $course = new Course();
-        $form = $this->createForm(CourseType::class, $course);
+        $form = $this->createForm(CourseType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($course);
-            $entityManager->flush();
-            return $this->redirectToRoute('course_index');
+            $formData = $form->getData();
+            try {
+                $addResponse = $billingClient->addCourse($formData, $this->getUser()->getApiToken());
+            } catch (HttpException $e) {
+                return $this->render('course/new.html.twig', array(
+                    'form' => $form->createView(),
+                    'error' => "Сервис временно недоступен. Попробуйте добавить урок позднее"
+                ));
+            }
+            if (array_key_exists('code', $addResponse)) {
+                return $this->render('course/new.html.twig', array(
+                    'form' => $form->createView(),
+                    'error' => $addResponse['message']
+                ));
+            } else {
+                $course = new Course();
+                $course->setName($formData['name']);
+                $course->setDescription($formData['description']);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($course);
+                $entityManager->flush();
+                return $this->redirectToRoute('course_index');
+            }
         }
         return $this->render('course/new.html.twig', [
-            'course' => $course,
             'form' => $form->createView(),
+            'error' => null
         ]);
     }
     /**
@@ -56,12 +81,12 @@ class CourseController extends AbstractController
         $auth_checker = $this->get('security.authorization_checker');
         if ($auth_checker->isGranted('ROLE_USER')) {
             return $this->render('course/show.html.twig', [
-                'course' => $courseRepository->findOneCombined($slug, $billingClient, $this->getUser()),
+                'course' => $courseRepository->findOneCombined($slug, $billingClient->getCourseByCode($slug), $billingClient->getTransactionByCode($slug, $this->getUser()->getApiToken())),
                 'user_balance' => $billingClient->getCurentUserBalance($this->getUser()->getApiToken())
             ]);
         } else {
             return $this->render('course/show.html.twig', [
-                'course' => $courseRepository->findOneCombined($slug, $billingClient, null)
+                'course' => $courseRepository->findOneCombined($slug, $billingClient->getCourseByCode($slug), null),
             ]);
         }
     }
@@ -105,12 +130,14 @@ class CourseController extends AbstractController
         if (array_key_exists('success', $result)) {
             $this->addFlash('success', 'Курс успешно оплачен');
             return $this->render('course/show.html.twig', [
-                'course' => $courseRepository->findOneCombined($slug, $billingClient, $this->getUser())
+                'course' => $courseRepository->findOneCombined($slug, $billingClient->getCourseByCode($slug), $billingClient->getTransactionByCode($slug, $this->getUser()->getApiToken())),
+                'error' => null
             ]);
         } elseif (array_key_exists('message', $result)) {
             $this->addFlash('error', $result['message']);
             return $this->render('course/show.html.twig', [
-                'course' => $courseRepository->findOneCombined($slug, $billingClient, $this->getUser())
+                'course' => $courseRepository->findOneCombined($slug, $billingClient->getCourseByCode($slug), $billingClient->getTransactionByCode($slug, $this->getUser()->getApiToken())),
+                'error' => null
             ]);
         }
     }

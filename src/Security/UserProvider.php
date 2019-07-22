@@ -49,16 +49,18 @@ class UserProvider implements UserProviderInterface
      *
      * @return UserInterface
      */
-        public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user)
     {
         if (!$user instanceof BillingUser) {
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         }
         $expTime = $this->billingClient->decodePayload($user->getApiToken())->exp;
-        $currentDate = ((new \DateTime())->modify('+1 minute'))->getTimestamp();
+        $currentDate = ((new \DateTime())->modify('+1 hour'))->getTimestamp();
         if ($currentDate > $expTime) {
             $response = $this->billingClient->sendRefreshRequest($user->getRefreshToken());
             $user->setApiToken($response['token']);
+        //    dump($response);
+           // die;
         }
         return $user;
     }

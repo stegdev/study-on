@@ -15,6 +15,27 @@
                             <p class="card-text">{{ course.description }}</p>
                             <a class="card-link" href="{{ path('course_show', {slug: course.slug}) }}">Пройти курс</a>
                         </div>
+                        <div class="col-md-6">
+                            {% if is_granted('ROLE_USER') %}
+                                {% if course.transaction_type is defined %}
+                                    {% if course.type is same as('buy') %}
+                                        <span class="badge badge-primary">
+                                                    Куплено
+                                                </span>
+                                    {% elseif course.type is same as('rent') %}
+                                        <span class="badge badge-warning">
+                                                    Арендовано до
+                                                    {{ course.expires_at|date("d.m.Y") }}
+                                                </span>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            {% if course.type is same as('free')  %}
+                                <h6>Бесплатный курс</h6>
+                            {% else %}
+                                <h6>Цена курса {{ course.price }} ₽ </h6>
+                            {% endif %}
+                        </div>
 
                     </div>
                 </div>

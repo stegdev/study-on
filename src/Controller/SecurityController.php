@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Form\RegistrationType;
 use App\Repository\CourseRepository;
@@ -16,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Service\BillingClient;
 use App\Security\BillingUser;
 use App\Security\StudyOnAuthenticator;
+
 class SecurityController extends AbstractController
 {
     /**

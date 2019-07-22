@@ -5,7 +5,7 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\DataFixtures\CourseFixtures;
 use App\Tests\AbstractTest;
-use App\Tests\mock\BillingClientMock;
+use App\Tests\Mock\BillingClientMock;
 use App\Entity\Course;
 
 class LessonControllerTest extends AbstractTest
@@ -28,6 +28,19 @@ class LessonControllerTest extends AbstractTest
         $client->submit($form);
         $client->followRedirect();
         return $client;
+    }
+
+    public function testShowLesson()
+    {
+        $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
+        $client->request('GET', '/courses/');
+        $crawler = $client->clickLink('Пройти курс');
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('Введение в JavaScript', $crawler->filter('h2')->text());
+        $link = $crawler->filter('ol li a')->eq(1)->link();
+        $crawler = $client->click($link);
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('Редакторы для кода', $crawler->filter('h2')->text());
     }
 
     public function testErrorLesson()
@@ -55,18 +68,30 @@ class LessonControllerTest extends AbstractTest
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
         $crawler = $client->clickLink('Пройти курс');
-        $link = $crawler->filter('.lessonShow')->first()->text();
-        $client->clickLink($link);
-        $client->clickLink('Редактировать');
+        $this->assertSame('Введение в JavaScript', $crawler->filter('h2')->text());
+        $link = $crawler->filter('a')->eq(3);
+        $client->clickLink($link->text());
+        $crawler = $client->clickLink('Редактировать');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('Справочники и спецификации', $crawler->filter('h1')->text());
+        $client->submitForm('Сохранить', ['lesson[name]'=>'my name']);
+        $crawler = $client->followRedirect();
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertSame('my name', $crawler->filter('h2')->text());
+        $crawler = $client->clickLink('Введение в JavaScript');
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertCount(3, $crawler->filter('ol li a'));
+        $this->assertSame('my name', $crawler->filter('ol li a')->eq(0)->text());
     }
 
     public function testDeleteLesson()
     {
         $client = $this->authClient('adminUser@gmail.com', 'passwordForAdminUser');
         $crawler = $client->clickLink('Пройти курс');
+        $this->assertSame('Введение в JavaScript', $crawler->filter('h2')->text());
         $link = $crawler->filter('a')->eq(3);
         $crawler = $client->clickLink($link->text());
+        $this->assertSame('Справочники и спецификации', $crawler->filter('h2')->text());
         $form = $crawler->selectButton('Удалить')->form();
         $crawler = $client->submit($form);
         $this->assertCount(2, $crawler->filter('ol li a'));
@@ -133,6 +158,7 @@ class LessonControllerTest extends AbstractTest
         $addButtonCheck = $crawlerCourse->filter('Редактировать')->count();
         $this->assertSame(0,$addButtonCheck);
     }
+
     public function testDeleteLessonUser()
     {
         $client = $this->authClient('simpleUser@gmail.com', 'passwordForSimpleUser');

@@ -61,13 +61,20 @@ class LessonController extends AbstractController
     public function show(Lesson $lesson, LessonRepository $repository, BillingClient $billingClient): Response
     {
         $id = $lesson->getCourse()->getId();
-        $parentCourse = $repository->getCombinedParentCourse($id, $billingClient, $this->getUser());
-        if ((($parentCourse['type'] == 'rent' || $parentCourse['type'] == 'buy') && array_key_exists('transaction_type', $parentCourse)) || $parentCourse['type'] == 'free') {
-            return $this->render('lesson/show.html.twig', [
-                'lesson' => $lesson
-            ]);
+        $course = $this->getDoctrine()->getRepository(Course::class)->findOneBy(['id' => $id]);
+        if (!$course) {
+            throw new HttpException(404, 'Course not found');
         } else {
-            throw new HttpException(403);
+            $slug = $course->getSlug();
+            $parentCourse = $this->getDoctrine()->getRepository(Course::class)->findOneCombined($slug, $billingClient->getCourseByCode($slug), $billingClient->getTransactionByCode($slug, $this->getUser()->getApiToken()));
+
+            if ((($parentCourse['type'] == 'rent' || $parentCourse['type'] == 'buy') && array_key_exists('transaction_type', $parentCourse)) || $parentCourse['type'] == 'free' || \in_array("ROLE_SUPER_ADMIN", $this->getUser()->getRoles())) {
+                return $this->render('lesson/show.html.twig', [
+                    'lesson' => $lesson
+                ]);
+            } else {
+                throw new HttpException(403);
+            }
         }
     }
     /**

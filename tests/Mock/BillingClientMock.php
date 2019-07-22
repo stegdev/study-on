@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Tests\mock;
+namespace App\Tests\Mock;
 
 use App\Service\BillingClient;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Cocur\Slugify\Slugify;
 
 class BillingClientMock extends BillingClient
 {
@@ -96,9 +97,9 @@ class BillingClientMock extends BillingClient
     {
         if (isset($token)) {
             if ($slug == 'mern-stack-front-to-back-full-stack-react-redux-node-js') {
-                return ["success" => true, "course_type" => "rent", "exrires_at" => "2019-06-24T12:56:54+00:00"];
+                return ["success" => true, "course_type" => "rent", "exrires_at" => "2019-07-24T12:56:54+00:00"];
             } elseif ($slug == 'build-a-blockchain-and-a-cryptocurrency-from-scratch') {
-                return ["success" => true, "course_type" => "buy", "exrires_at" => "2019-06-24T12:55:45+00:00"];
+                return ["success" => true, "course_type" => "buy", "exrires_at" => "2019-07-24T12:55:45+00:00"];
             }
         }
     }
@@ -130,6 +131,23 @@ class BillingClientMock extends BillingClient
                 }
             }
             return $result;
+        }
+    }
+
+    public function addCourse($course, $token)
+    {
+        if (isset($token)) {
+            if (!isset($course['name']) || !isset($course['type']) || !isset($course['price'])) {
+                return ['code' => 400, 'message' => 'This value must no be empty'];
+            } else {
+                $slugify = new Slugify();
+                $tempArray['code'] = $slugify->slugify($course['name']);
+                $tempArray['title'] = $course['name'];
+                $tempArray['type'] = $course['type'];
+                $tempArray['price'] = $course['price'];
+                array_push($this->coursesResponse, $tempArray);
+                return ['success' => 'true'];
+            }
         }
     }
 }
