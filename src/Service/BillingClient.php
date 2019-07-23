@@ -56,6 +56,17 @@ class BillingClient
         return $this->execCurl("POST", json_encode(['code' => $slugify->slugify($course['name']), 'title' => $course['description'], 'type' => $course['type'], 'price' => $course['price']]), '/api/v1/courses', $token);
     }
 
+    public function updateCourse($course, $slug, $token)
+    {
+        $slugify = new Slugify();
+        return $this->execCurl("POST", json_encode(['code' => $slugify->slugify($course['name']), 'title' => $course['name'], 'type' => $course['type'], 'price' => $course['price']]), '/api/v1/courses/'. $slug, $token);
+    }
+
+    public function deleteCourse($slug, $token)
+    {
+        return $this->execCurl("DELETE", '', '/api/v1/courses/'. $slug, $token);
+    }
+
     public function getPaymentTransactions($token)
     {
         try {

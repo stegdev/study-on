@@ -3,8 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Course;
-use Doctrine\Common\Collections\Criteria;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -35,79 +33,4 @@ class CourseRepository extends ServiceEntityRepository
         return $finalSlugs;
     }
 
-    public function findAllCombined($coursesBilling, $userTransactions)
-    {
-        $coursesStudyOn = $this->createQueryBuilder('c')
-            ->select('c.id', 'c.name', 'c.description', 'c.slug')
-            ->getQuery()
-            ->getResult();
-
-
-        $combinedCourses = $this->mergeByCode($coursesStudyOn, $coursesBilling, function ($item1, $item2) {
-            return $item1['slug'] == $item2['code'];
-        });
-        if (isset($userTransactions)) {
-            if ($userTransactions == '') {
-                return $combinedCourses;
-            } else {
-                for ($i = 0; $i < count($combinedCourses); $i++) {
-                    foreach ($userTransactions as $transaction) {
-                        if ($transaction['course_code'] == $combinedCourses[$i]['slug']) {
-                            $combinedCourses[$i]['transaction_type'] = $transaction['type'];
-                            $combinedCourses[$i]['expires_at'] = $transaction['expires_at'];
-                        }
-                    }
-                }
-            }
-        }
-        return $combinedCourses;
-    }
-
-    public function findOneCombined($slug, $courseBilling, $userTransaction)
-    {
-        $course = $this->findOneBy(['slug' => $slug]);
-        if (!$course) {
-            throw new HttpException(404);
-        } else {
-            $orderBy = (Criteria::create())->orderBy([
-                'number' => Criteria::ASC,
-            ]);
-            $lessons = ($course->getLessons())->matching($orderBy);
-            $courseStudyOn = $this->createQueryBuilder('c')
-                ->select('c.id', 'c.name', 'c.description', 'c.slug')
-                ->andWhere('c.slug = :slug')
-                ->setParameter('slug', $slug)
-                ->getQuery()
-                ->getResult();
-
-            $combinedCourse = $this->mergeByCode($courseStudyOn, $courseBilling, function ($item1, $item2) {
-                return $item1['slug'] == $item2['code'];
-            });
-            $combinedCourse[0]['lessons'] = $lessons;
-            if (isset($userTransaction)) {
-                if ($userTransaction == '') {
-                    return $combinedCourse[0];
-                } else {
-                    $combinedCourse[0]['transaction_type'] = $userTransaction[0]['type'];
-                    $combinedCourse[0]['expires_at'] = $userTransaction[0]['expires_at'];
-                }
-            }
-            return $combinedCourse[0];
-        }
-    }
-
-    public function mergeByCode($array1, $array2, $predicate)
-    {
-        $result = array();
-
-        foreach ($array1 as $item1) {
-            foreach ($array2 as $item2) {
-                if ($predicate($item1, $item2)) {
-                    $result[] = array_merge($item1, $item2);
-                }
-            }
-        }
-
-        return $result;
-    }
 }
